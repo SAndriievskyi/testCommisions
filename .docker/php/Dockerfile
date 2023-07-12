@@ -1,5 +1,7 @@
 FROM php:8.2-fpm-buster
+
 ARG TIMEZONE
+ARG WITH_XDEBUG=false
 
 COPY php.ini /usr/local/etc/php/conf.d/docker-php-config.ini
 
@@ -32,5 +34,16 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} >
     && "date"
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN if [ "$WITH_XDEBUG" = "true" ]; then \
+        apt-get install -y wget git unzip; \
+        pecl install xdebug; \
+        docker-php-ext-enable xdebug; \
+        echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/xdebug.ini; \
+        echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/xdebug.ini; \
+        echo "xdebug.discover_client_host=0" >> /usr/local/etc/php/conf.d/xdebug.ini; \
+        echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/xdebug.ini; \
+        echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/xdebug.ini; \
+    fi ;
 
 WORKDIR /var/www/symfony

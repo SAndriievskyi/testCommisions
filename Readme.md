@@ -20,20 +20,5 @@ It is composed by 4 containers:
 
 4. Go inside folder `./docker` and run `docker compose up -d` to start containers.
 
-5. You should work inside the `php` container. This project is configured to work with [Remote Container](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension for Visual Studio Code, so you could run `Reopen in container` command after open the project.
+5. Inside the `php` container, run `composer install` to install dependencies from `/var/www/symfony` folder.
 
-6. Inside the `php` container, run `composer install` to install dependencies from `/var/www/symfony` folder.
-
-7. Use the following value for the DATABASE_URL environment variable:
-
-```
-DATABASE_URL=mysql://app_user:helloworld@db:3306/app_db?serverVersion=8.0.33
-```
-
-You could change the name, user and password of the database in the `env` file at the root of the project.
-
-## To learn more
-
-I have recorded a Youtube session explaining the different parts of this project. You could see it here:
-
-[Boilerplate para Symfony basado en Docker, NGINX y PHP8](https://youtu.be/A82-hry3Zvw)

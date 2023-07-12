@@ -1,4 +1,4 @@
-version: "3"
+version: "1"
 
 services:
     db:
@@ -8,32 +8,37 @@ services:
         volumes:
             - "db_app:/var/lib/mysql"
         environment:
-            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
             MYSQL_DATABASE: ${MYSQL_DATABASE}
-            MYSQL_USER: ${MYSQL_USER}
-            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
         ports:
             - 3306:3306
         networks:
             - symfony_app
+
     php:
         build:
-            context: ./php
+            context: .docker/php
             args:
                 TIMEZONE: ${TIMEZONE}
+                PROJECT_ROOT: ${PROJECT_ROOT}
         volumes:
-            - ../:/var/www/symfony:cached
-            - symfony_app_var:/var/www/symfony/var
-            - symfony_app_vendor:/var/www/symfony/vendor
+            - ./:${PROJECT_ROOT}
+            - ~/.composer:/root/.composer/
+            - ./var/docker/log/phpfpm/:/var/log/phpfpm/
+            - ./var/docker/log/app/:/var/log/app/
         networks:
             - symfony_app
+        extra_hosts:
+            - host.docker.internal:host-gateway
+
     nginx:
         build:
-            context: ./nginx
+            context: .docker/nginx
+            args:
+                PROJECT_ROOT: ${PROJECT_ROOT}
         volumes:
-            - ../:/var/www/symfony:cached
-            - symfony_app_var:/var/www/symfony/var
-            - symfony_app_vendor:/var/www/symfony/vendor
+            - ./:${PROJECT_ROOT}
+            - ./var/docker/log/nginx:/var/log/nginx
         ports:
             - 80:80
         networks:
@@ -42,8 +47,6 @@ services:
             - .env.nginx.local
 
 volumes:
-    symfony_app_var:
-    symfony_app_vendor:
     db_app:
 
 networks:
