@@ -1,20 +1,6 @@
 version: "1"
 
 services:
-    db:
-        image: mysql:8.0.33
-        platform: linux/x86_64
-        command: --default-authentication-plugin=mysql_native_password
-        volumes:
-            - "db_app:/var/lib/mysql"
-        environment:
-            MYSQL_DATABASE: ${MYSQL_DATABASE}
-            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-        ports:
-            - 3306:3306
-        networks:
-            - symfony_app
-
     php:
         build:
             context: .docker/php
@@ -30,24 +16,6 @@ services:
             - symfony_app
         extra_hosts:
             - host.docker.internal:host-gateway
-
-    nginx:
-        build:
-            context: .docker/nginx
-            args:
-                PROJECT_ROOT: ${PROJECT_ROOT}
-        volumes:
-            - ./:${PROJECT_ROOT}
-            - ./var/docker/log/nginx:/var/log/nginx
-        ports:
-            - 80:80
-        networks:
-            - symfony_app
-        env_file:
-            - .env.nginx.local
-
-volumes:
-    db_app:
 
 networks:
     symfony_app:

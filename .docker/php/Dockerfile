@@ -1,5 +1,6 @@
 FROM php:8.2-fpm-buster
 
+ARG PROJECT_ROOT
 ARG TIMEZONE
 ARG WITH_XDEBUG=false
 
@@ -46,4 +47,4 @@ RUN if [ "$WITH_XDEBUG" = "true" ]; then \
         echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/xdebug.ini; \
     fi ;
 
-WORKDIR /var/www/symfony
+WORKDIR ${PROJECT_ROOT}

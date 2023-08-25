@@ -16,9 +16,16 @@ services:
     App\:
         resource: '../src/'
         exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/{TEST}'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    App\Components\Bin\Loaders\BinlistNet:
+        class: App\Components\Bin\Loaders\BinlistNet
+        arguments:
+            $url: "https://lookup.binlist.net/"
+
+    App\Components\ExchangeRate\Loaders\Exchangeratesapi:
+        class: App\Components\ExchangeRate\Loaders\Exchangeratesapi
+        arguments:
+            $url: "http://api.exchangeratesapi.io/v1/latest"
+            $apiKey: "%env(EXCHANGERATESAPI_ACCESS_KEY)%"
